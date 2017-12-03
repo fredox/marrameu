@@ -1,0 +1,1 @@
+This is a little framework (WIP) to make games in HTML & Javascript (With classes ES6). I use this project to learn the Ecmascript 6 specification
