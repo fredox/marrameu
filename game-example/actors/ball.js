@@ -17,8 +17,8 @@ class Ball extends RectangleActor {
 		var xQuarterChnunk = gameData.screen.width/4;
 		this.x  = Maths.getRandomBetween(xQuarterChnunk, 2*xQuarterChnunk);
 		this.y  = gameData.screen.height/2;
-		this.dx = Maths.getRandomBetween(-2, 2);
-		this.dy = Maths.getRandomBetween(1,2);
+		this.dx = Maths.getRandomBetween(-4, 4);
+		this.dy = Maths.getRandomBetween(2,4);
 	}
 
 	init(gameData) {

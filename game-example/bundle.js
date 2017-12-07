@@ -308,45 +308,21 @@ class Paddle extends __WEBPACK_IMPORTED_MODULE_2__classes_actor_js__["b" /* Rect
 		});
 
 		__WEBPACK_IMPORTED_MODULE_1__classes_event_js__["a" /* default */].on('keyboard.down.left', function(){
-			if (paddle.moving)
-				return;
-			else {
-				paddle.update = function() {
-					if (paddle.x > 1)
-						paddle.x = paddle.x - 5;
-				};
-
+			if (!paddle.moving){
 				paddle.moving = true;
 				paddle.xDirection = -1;
 			}
 		});
 
 		__WEBPACK_IMPORTED_MODULE_1__classes_event_js__["a" /* default */].on('keyboard.down.right', function(){
-			if (paddle.moving)
-				return;
-			else {
-				paddle.update = function() {
-					if ((paddle.x + paddle.width) < (gameData.screen.width-5)) {
-						paddle.x = paddle.x + 5;
-					}
-				};
-
+			if (!paddle.moving){
 				paddle.moving = true;
 				paddle.xDirection = 1;
 			}
 		});
 
-		__WEBPACK_IMPORTED_MODULE_1__classes_event_js__["a" /* default */].on('keyboard.up.left', function(){
-			paddle.update = function() {};
-			paddle.moving = false;
-		});
-
-		__WEBPACK_IMPORTED_MODULE_1__classes_event_js__["a" /* default */].on('keyboard.up.right', function(){
-			paddle.update = function() {};
-			paddle.moving = false;
-		});
-
-
+		__WEBPACK_IMPORTED_MODULE_1__classes_event_js__["a" /* default */].on('keyboard.up.left', function(){paddle.moving = false;});
+		__WEBPACK_IMPORTED_MODULE_1__classes_event_js__["a" /* default */].on('keyboard.up.right', function(){ paddle.moving = false;});
 	}
 
 	draw(gameData) {
@@ -357,7 +333,16 @@ class Paddle extends __WEBPACK_IMPORTED_MODULE_2__classes_actor_js__["b" /* Rect
 		canvasContext.closePath();
 	}
 
-	update(gameData) {}
+	update(gameData) {
+		if (!this.moving) 
+			return;
+		else {
+			if ((this.xDirection == 1) && ((this.x + this.width) < (gameData.screen.width-5)))
+				this.x += 5;
+			else if (this.x > 1)
+				this.x -= 5; 
+		}
+	}
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Paddle);
@@ -867,8 +852,8 @@ class Ball extends __WEBPACK_IMPORTED_MODULE_2__classes_actor_js__["b" /* Rectan
 		var xQuarterChnunk = gameData.screen.width/4;
 		this.x  = __WEBPACK_IMPORTED_MODULE_3__classes_maths_js__["a" /* default */].getRandomBetween(xQuarterChnunk, 2*xQuarterChnunk);
 		this.y  = gameData.screen.height/2;
-		this.dx = __WEBPACK_IMPORTED_MODULE_3__classes_maths_js__["a" /* default */].getRandomBetween(-2, 2);
-		this.dy = __WEBPACK_IMPORTED_MODULE_3__classes_maths_js__["a" /* default */].getRandomBetween(1,2);
+		this.dx = __WEBPACK_IMPORTED_MODULE_3__classes_maths_js__["a" /* default */].getRandomBetween(-4, 4);
+		this.dy = __WEBPACK_IMPORTED_MODULE_3__classes_maths_js__["a" /* default */].getRandomBetween(2,4);
 	}
 
 	init(gameData) {

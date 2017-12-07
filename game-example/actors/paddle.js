@@ -31,45 +31,21 @@ class Paddle extends RectangleActor {
 		});
 
 		Event.on('keyboard.down.left', function(){
-			if (paddle.moving)
-				return;
-			else {
-				paddle.update = function() {
-					if (paddle.x > 1)
-						paddle.x = paddle.x - 5;
-				};
-
+			if (!paddle.moving){
 				paddle.moving = true;
 				paddle.xDirection = -1;
 			}
 		});
 
 		Event.on('keyboard.down.right', function(){
-			if (paddle.moving)
-				return;
-			else {
-				paddle.update = function() {
-					if ((paddle.x + paddle.width) < (gameData.screen.width-5)) {
-						paddle.x = paddle.x + 5;
-					}
-				};
-
+			if (!paddle.moving){
 				paddle.moving = true;
 				paddle.xDirection = 1;
 			}
 		});
 
-		Event.on('keyboard.up.left', function(){
-			paddle.update = function() {};
-			paddle.moving = false;
-		});
-
-		Event.on('keyboard.up.right', function(){
-			paddle.update = function() {};
-			paddle.moving = false;
-		});
-
-
+		Event.on('keyboard.up.left', function(){paddle.moving = false;});
+		Event.on('keyboard.up.right', function(){ paddle.moving = false;});
 	}
 
 	draw(gameData) {
@@ -80,7 +56,16 @@ class Paddle extends RectangleActor {
 		canvasContext.closePath();
 	}
 
-	update(gameData) {}
+	update(gameData) {
+		if (!this.moving) 
+			return;
+		else {
+			if ((this.xDirection == 1) && ((this.x + this.width) < (gameData.screen.width-5)))
+				this.x += 5;
+			else if (this.x > 1)
+				this.x -= 5; 
+		}
+	}
 }
 
 export default Paddle;
