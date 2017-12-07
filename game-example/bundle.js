@@ -283,6 +283,7 @@ class Paddle extends __WEBPACK_IMPORTED_MODULE_2__classes_actor_js__["b" /* Rect
 	constructor(x, y) {
 		super(x, y, 130, 20);
 		this.xDirection = 0;
+		this.moving = false;
 	}
 
 	init(gameData) {
@@ -306,17 +307,46 @@ class Paddle extends __WEBPACK_IMPORTED_MODULE_2__classes_actor_js__["b" /* Rect
 			}
 		});
 
-		__WEBPACK_IMPORTED_MODULE_1__classes_event_js__["a" /* default */].on('keyboard.left', function(){
-			paddle.xDirection = -1;
-			if (paddle.x >= 5)
-				paddle.x = paddle.x - 5;
+		__WEBPACK_IMPORTED_MODULE_1__classes_event_js__["a" /* default */].on('keyboard.down.left', function(){
+			if (paddle.moving)
+				return;
+			else {
+				paddle.update = function() {
+					if (paddle.x > 1)
+						paddle.x = paddle.x - 5;
+				};
+
+				paddle.moving = true;
+				paddle.xDirection = -1;
+			}
 		});
 
-		__WEBPACK_IMPORTED_MODULE_1__classes_event_js__["a" /* default */].on('keyboard.right', function(){
-			paddle.xDirection = 1;
-			if ((paddle.x + paddle.width) < (gameData.screen.width-5))
-				paddle.x = paddle.x + 5;
+		__WEBPACK_IMPORTED_MODULE_1__classes_event_js__["a" /* default */].on('keyboard.down.right', function(){
+			if (paddle.moving)
+				return;
+			else {
+				paddle.update = function() {
+					if ((paddle.x + paddle.width) < (gameData.screen.width-5)) {
+						paddle.x = paddle.x + 5;
+					}
+				};
+
+				paddle.moving = true;
+				paddle.xDirection = 1;
+			}
 		});
+
+		__WEBPACK_IMPORTED_MODULE_1__classes_event_js__["a" /* default */].on('keyboard.up.left', function(){
+			paddle.update = function() {};
+			paddle.moving = false;
+		});
+
+		__WEBPACK_IMPORTED_MODULE_1__classes_event_js__["a" /* default */].on('keyboard.up.right', function(){
+			paddle.update = function() {};
+			paddle.moving = false;
+		});
+
+
 	}
 
 	draw(gameData) {
@@ -721,27 +751,51 @@ class Touch {
 class Keyboard {
 	static addKeyboard() {
 		window.addEventListener('keydown', Keyboard.keyPressed, false);
+		window.addEventListener('keyup', Keyboard.keyReleased, false);
 	}
 
 	static keyPressed(event) {
 		switch (event.code) {
 			case 'ArrowLeft':
-				__WEBPACK_IMPORTED_MODULE_1__event_js__["a" /* default */].emit('keyboard.left');
+				__WEBPACK_IMPORTED_MODULE_1__event_js__["a" /* default */].emit('keyboard.down.left');
 	            break;
         	case 'ArrowUp':
-	            __WEBPACK_IMPORTED_MODULE_1__event_js__["a" /* default */].emit('keyboard.up');
+	            __WEBPACK_IMPORTED_MODULE_1__event_js__["a" /* default */].emit('keyboard.down.up');
 	            break;
         	case 'ArrowRight':
-	            __WEBPACK_IMPORTED_MODULE_1__event_js__["a" /* default */].emit('keyboard.right');
+	            __WEBPACK_IMPORTED_MODULE_1__event_js__["a" /* default */].emit('keyboard.down.right');
 	            break;
         	case 'ArrowDown':
-	            __WEBPACK_IMPORTED_MODULE_1__event_js__["a" /* default */].emit('keyboard.down');
+	            __WEBPACK_IMPORTED_MODULE_1__event_js__["a" /* default */].emit('keyboard.down.down');
 	            break;
 	        case 'z':
-	        	__WEBPACK_IMPORTED_MODULE_1__event_js__["a" /* default */].emit('keyboard.z');
+	        	__WEBPACK_IMPORTED_MODULE_1__event_js__["a" /* default */].emit('keyboard.down.z');
 	        	break;
 	        case 'x':
-	        	__WEBPACK_IMPORTED_MODULE_1__event_js__["a" /* default */].emot('keyboard.x');
+	        	__WEBPACK_IMPORTED_MODULE_1__event_js__["a" /* default */].emit('keyboard.down.x');
+	        	break;
+		}
+	}
+
+	static keyReleased(event) {
+		switch (event.code) {
+			case 'ArrowLeft':
+				__WEBPACK_IMPORTED_MODULE_1__event_js__["a" /* default */].emit('keyboard.up.left');
+	            break;
+        	case 'ArrowUp':
+	            __WEBPACK_IMPORTED_MODULE_1__event_js__["a" /* default */].emit('keyboard.up.up');
+	            break;
+        	case 'ArrowRight':
+	            __WEBPACK_IMPORTED_MODULE_1__event_js__["a" /* default */].emit('keyboard.up.right');
+	            break;
+        	case 'ArrowDown':
+	            __WEBPACK_IMPORTED_MODULE_1__event_js__["a" /* default */].emit('keyboard.up.down');
+	            break;
+	        case 'z':
+	        	__WEBPACK_IMPORTED_MODULE_1__event_js__["a" /* default */].emit('keyboard.up.z');
+	        	break;
+	        case 'x':
+	        	__WEBPACK_IMPORTED_MODULE_1__event_js__["a" /* default */].emit('keyboard.up.x');
 	        	break;
 		}
 	}

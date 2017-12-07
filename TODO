@@ -1,0 +1,1 @@
+ - Make a class to handle controls of an Actor, composing the classes Event + Actor + [Touch|Keyboard]
