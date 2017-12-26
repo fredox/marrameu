@@ -3,8 +3,8 @@ import Event from '../../classes/event.js';
 import {Actor, RectangleActor} from '../../classes/actor.js';
 
 class Paddle extends RectangleActor {
-	constructor(x, y) {
-		super(x, y, 130, 20);
+	constructor(x, y, width, height) {
+		super(x, y, width, height);
 		this.xDirection = 0;
 		this.moving = false;
 	}
@@ -15,17 +15,15 @@ class Paddle extends RectangleActor {
 			if (data.type != 'touchMove')
 				return;
 
-
-
 			if (data.touch.previous.x > data.touch.current.x) {
 				paddle.xDirection = -1;
-				if (paddle.x >= 5)
+				if (paddle.x >= gameData.xBoundLeft)
 					paddle.x = paddle.x - 5;
 			}
 
 			if (data.touch.previous.x < data.touch.current.x) {
 				paddle.xDirection = 1;
-				if ((paddle.x + paddle.width) < (gameData.screen.width-5))
+				if ((paddle.x + paddle.width) < (gameData.xBoundRight))
 					paddle.x = paddle.x + 5;
 			}
 		});
@@ -60,9 +58,9 @@ class Paddle extends RectangleActor {
 		if (!this.moving) 
 			return;
 		else {
-			if ((this.xDirection == 1) && ((this.x + this.width) < (gameData.screen.width-5)))
+			if ((this.xDirection == 1) && ((this.x + this.width) < (gameData.xBoundRight)))
 				this.x += 5;
-			else if (this.x > 1)
+			else if (this.x > gameData.xBoundLeft)
 				this.x -= 5; 
 		}
 	}

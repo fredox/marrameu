@@ -4,8 +4,9 @@ import {Actor, RectangleActor} from '../../classes/actor.js';
 import Maths from '../../classes/maths.js';
 
 class Ball extends RectangleActor {
-	constructor(x, y) {
-		super(x, y, 20, 20);
+	constructor(x, y, size) {
+		super(x, y, size, size);
+		this.size = size;
 		this.friction = 0;
 	}
 
@@ -17,8 +18,11 @@ class Ball extends RectangleActor {
 		var xQuarterChnunk = gameData.screen.width/4;
 		this.x  = Maths.getRandomBetween(xQuarterChnunk, 2*xQuarterChnunk);
 		this.y  = gameData.screen.height/2;
-		this.dx = Maths.getRandomBetween(-4, 4);
-		this.dy = Maths.getRandomBetween(2,4);
+
+		var velocity = this.size/6;
+
+		this.dx = Maths.getRandomBetween(-velocity, velocity);
+		this.dy = Maths.getRandomBetween(velocity/2, velocity);
 	}
 
 	init(gameData) {

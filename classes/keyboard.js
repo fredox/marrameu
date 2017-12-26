@@ -21,10 +21,10 @@ class Keyboard {
         	case 'ArrowDown':
 	            Event.emit('keyboard.down.down');
 	            break;
-	        case 'z':
+	        case 'KeyZ':
 	        	Event.emit('keyboard.down.z');
 	        	break;
-	        case 'x':
+	        case 'KeyX':
 	        	Event.emit('keyboard.down.x');
 	        	break;
 		}

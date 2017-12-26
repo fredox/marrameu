@@ -280,8 +280,8 @@ class Sound {
 
 
 class Paddle extends __WEBPACK_IMPORTED_MODULE_2__classes_actor_js__["b" /* RectangleActor */] {
-	constructor(x, y) {
-		super(x, y, 130, 20);
+	constructor(x, y, width, height) {
+		super(x, y, width, height);
 		this.xDirection = 0;
 		this.moving = false;
 	}
@@ -292,17 +292,15 @@ class Paddle extends __WEBPACK_IMPORTED_MODULE_2__classes_actor_js__["b" /* Rect
 			if (data.type != 'touchMove')
 				return;
 
-
-
 			if (data.touch.previous.x > data.touch.current.x) {
 				paddle.xDirection = -1;
-				if (paddle.x >= 5)
+				if (paddle.x >= gameData.xBoundLeft)
 					paddle.x = paddle.x - 5;
 			}
 
 			if (data.touch.previous.x < data.touch.current.x) {
 				paddle.xDirection = 1;
-				if ((paddle.x + paddle.width) < (gameData.screen.width-5))
+				if ((paddle.x + paddle.width) < (gameData.xBoundRight))
 					paddle.x = paddle.x + 5;
 			}
 		});
@@ -337,9 +335,9 @@ class Paddle extends __WEBPACK_IMPORTED_MODULE_2__classes_actor_js__["b" /* Rect
 		if (!this.moving) 
 			return;
 		else {
-			if ((this.xDirection == 1) && ((this.x + this.width) < (gameData.screen.width-5)))
+			if ((this.xDirection == 1) && ((this.x + this.width) < (gameData.xBoundRight)))
 				this.x += 5;
-			else if (this.x > 1)
+			else if (this.x > gameData.xBoundLeft)
 				this.x -= 5; 
 		}
 	}
@@ -474,6 +472,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__actors_marrameu_label_js__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__classes_label_js__ = __webpack_require__(22);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__classes_event_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__classes_grid_handler_js__ = __webpack_require__(23);
+
 
 
 
@@ -494,11 +494,8 @@ var gameData = {
 	'canvasId':'game', 
 	'score':{'game':{'player':0,'machine':0}, 'matches':{'player':0,'machine':0}},
 	'ballFriction':0.5,
-	'wallWidth': 10,
 	'screen': {'width':__WEBPACK_IMPORTED_MODULE_8__classes_screen_js__["a" /* default */].width(), 'height':__WEBPACK_IMPORTED_MODULE_8__classes_screen_js__["a" /* default */].height()}
 };
-
-
 
 intro();
 
@@ -507,15 +504,36 @@ __WEBPACK_IMPORTED_MODULE_14__classes_event_js__["a" /* default */].on('startGam
 });
 
 function game() {
-	var playerPaddle  = new __WEBPACK_IMPORTED_MODULE_2__actors_paddle_js__["a" /* default */](50, 540);
-	var machinePaddle = new __WEBPACK_IMPORTED_MODULE_3__actors_machine_paddle_js__["a" /* default */](50, 50);
+	var gh = new __WEBPACK_IMPORTED_MODULE_15__classes_grid_handler_js__["a" /* default */](__WEBPACK_IMPORTED_MODULE_8__classes_screen_js__["a" /* default */].width(), __WEBPACK_IMPORTED_MODULE_8__classes_screen_js__["a" /* default */].height());
 
-	var ball = new __WEBPACK_IMPORTED_MODULE_4__actors_ball_js__["a" /* default */](0, 0);
+	var PaddleSize = {
+		width: gh.size(8),
+		height: gh.size(1)
+	}
+
+	var WallSize = {
+		width: gh.size(1),
+		height: gh.size(39)
+	}
+
+	var xBoundLeft  = gh.marginLeftRight + WallSize.width;
+	var xBoundRight = __WEBPACK_IMPORTED_MODULE_8__classes_screen_js__["a" /* default */].width() - gh.marginLeftRight -  WallSize.width;
+
+	var playerPos  = gh.pos(3, 33);
+	var machinePos = gh.pos(3, 3);
+
+	var playerPaddle  = new __WEBPACK_IMPORTED_MODULE_2__actors_paddle_js__["a" /* default */](playerPos.x, playerPos.y, PaddleSize.width, PaddleSize.height);
+	var machinePaddle = new __WEBPACK_IMPORTED_MODULE_3__actors_machine_paddle_js__["a" /* default */](machinePos.x, machinePos.y, PaddleSize.width, PaddleSize.height);
+
+	var ball = new __WEBPACK_IMPORTED_MODULE_4__actors_ball_js__["a" /* default */](0, 0, gh.size(1), gh.size(1));
 	ball.setFriction(gameData.ballFriction);
 	machinePaddle.setBallReference(ball);
 
-	var leftWall  = new __WEBPACK_IMPORTED_MODULE_5__actors_wall_js__["a" /* default */](0, 0, gameData.wallWidth, __WEBPACK_IMPORTED_MODULE_8__classes_screen_js__["a" /* default */].height());
-	var rightWall = new __WEBPACK_IMPORTED_MODULE_5__actors_wall_js__["a" /* default */](__WEBPACK_IMPORTED_MODULE_8__classes_screen_js__["a" /* default */].width() - gameData.wallWidth, 0, gameData.wallWidth, __WEBPACK_IMPORTED_MODULE_8__classes_screen_js__["a" /* default */].height())
+	var leftWall  = new __WEBPACK_IMPORTED_MODULE_5__actors_wall_js__["a" /* default */](gh.marginLeftRight, gh.marginTopBottom, WallSize.width, WallSize.height);
+	var rightWall = new __WEBPACK_IMPORTED_MODULE_5__actors_wall_js__["a" /* default */](xBoundRight, gh.marginTopBottom, WallSize.width, WallSize.height);
+
+	gameData.xBoundLeft  = xBoundLeft;
+	gameData.xBoundRight = xBoundRight;
 
 	var eventCollider = new __WEBPACK_IMPORTED_MODULE_6__event_ball_collider_js__["a" /* default */]();
 	eventCollider.setElements(ball, [playerPaddle, machinePaddle, leftWall, rightWall]);
@@ -532,12 +550,13 @@ function game() {
 }
 
 function intro() {
+	var gh = new __WEBPACK_IMPORTED_MODULE_15__classes_grid_handler_js__["a" /* default */](__WEBPACK_IMPORTED_MODULE_8__classes_screen_js__["a" /* default */].width(), __WEBPACK_IMPORTED_MODULE_8__classes_screen_js__["a" /* default */].height());
 	var gameDataIntro = {'canvasId':'intro','screen': {'width':__WEBPACK_IMPORTED_MODULE_8__classes_screen_js__["a" /* default */].width(), 'height':__WEBPACK_IMPORTED_MODULE_8__classes_screen_js__["a" /* default */].height()}};
 	var pongLabel = new __WEBPACK_IMPORTED_MODULE_11__actors_pong_label_js__["a" /* default */](__WEBPACK_IMPORTED_MODULE_8__classes_screen_js__["a" /* default */].width()/2, __WEBPACK_IMPORTED_MODULE_8__classes_screen_js__["a" /* default */].height()/2, 'PONG', 1280);
-	var marrameuLabel = new __WEBPACK_IMPORTED_MODULE_12__actors_marrameu_label_js__["a" /* default */](240, 350, 'by Marrameu Games', 20);
+	var marrameuLabel = new __WEBPACK_IMPORTED_MODULE_12__actors_marrameu_label_js__["a" /* default */](__WEBPACK_IMPORTED_MODULE_8__classes_screen_js__["a" /* default */].width()/2, __WEBPACK_IMPORTED_MODULE_8__classes_screen_js__["a" /* default */].height()/2 + gh.size(4), 'by Marrameu Games', 20);
 	var intro = new __WEBPACK_IMPORTED_MODULE_1__classes_game_machine_js__["a" /* default */](gameDataIntro,[pongLabel, marrameuLabel]);
 
-	var tapStartGame = new __WEBPACK_IMPORTED_MODULE_13__classes_label_js__["a" /* default */](180, 420, 'Tap to Start', 30, 'Arial', 'white');
+	var tapStartGame = new __WEBPACK_IMPORTED_MODULE_13__classes_label_js__["a" /* default */](__WEBPACK_IMPORTED_MODULE_8__classes_screen_js__["a" /* default */].width()/2, __WEBPACK_IMPORTED_MODULE_8__classes_screen_js__["a" /* default */].height()/2 + gh.size(8), 'Tap to Start Or press key "z"', 20, 'Arial', '#008668');
 
 
 	intro.initGame();
@@ -546,6 +565,11 @@ function intro() {
 		if (data.type == 'end') {
 			intro.actors.push(tapStartGame);
 			__WEBPACK_IMPORTED_MODULE_14__classes_event_js__["a" /* default */].on('touch.' + gameDataIntro.canvasId, function(data) {
+				document.getElementById("intro").style.zIndex = "1";
+				intro.stopGame();
+				__WEBPACK_IMPORTED_MODULE_14__classes_event_js__["a" /* default */].emit('startGame');
+			});
+			__WEBPACK_IMPORTED_MODULE_14__classes_event_js__["a" /* default */].on('keyboard.down.z', function(data) {
 				document.getElementById("intro").style.zIndex = "1";
 				intro.stopGame();
 				__WEBPACK_IMPORTED_MODULE_14__classes_event_js__["a" /* default */].emit('startGame');
@@ -753,10 +777,10 @@ class Keyboard {
         	case 'ArrowDown':
 	            __WEBPACK_IMPORTED_MODULE_1__event_js__["a" /* default */].emit('keyboard.down.down');
 	            break;
-	        case 'z':
+	        case 'KeyZ':
 	        	__WEBPACK_IMPORTED_MODULE_1__event_js__["a" /* default */].emit('keyboard.down.z');
 	        	break;
-	        case 'x':
+	        case 'KeyX':
 	        	__WEBPACK_IMPORTED_MODULE_1__event_js__["a" /* default */].emit('keyboard.down.x');
 	        	break;
 		}
@@ -803,8 +827,8 @@ class Keyboard {
 
 
 class MachinePaddle extends __WEBPACK_IMPORTED_MODULE_2__paddle_js__["a" /* default */] {
-	constructor(x, y) {
-		super(x, y, 150, 20);
+	constructor(x, y, width, height) {
+		super(x, y, width, height);
 	}
 
 	setBallReference(ball) {
@@ -814,11 +838,15 @@ class MachinePaddle extends __WEBPACK_IMPORTED_MODULE_2__paddle_js__["a" /* defa
 	init(gameData) {}
 
 	update(gameData) {
-		if (this.center().x < this.ball.x)
-			this.x = this.x + 2;
-		else
-			if (this.x >= 2)
+		if (this.center().x < this.ball.x) {
+			if ((this.x + this.width) < (gameData.xBoundRight)) {
+				this.x = this.x + 2;
+			}
+		} else {
+			if (this.x > gameData.xBoundLeft) {
 				this.x = this.x -2;
+			}
+		}
 	}
 }
 
@@ -839,8 +867,9 @@ class MachinePaddle extends __WEBPACK_IMPORTED_MODULE_2__paddle_js__["a" /* defa
 
 
 class Ball extends __WEBPACK_IMPORTED_MODULE_2__classes_actor_js__["b" /* RectangleActor */] {
-	constructor(x, y) {
-		super(x, y, 20, 20);
+	constructor(x, y, size) {
+		super(x, y, size, size);
+		this.size = size;
 		this.friction = 0;
 	}
 
@@ -852,8 +881,11 @@ class Ball extends __WEBPACK_IMPORTED_MODULE_2__classes_actor_js__["b" /* Rectan
 		var xQuarterChnunk = gameData.screen.width/4;
 		this.x  = __WEBPACK_IMPORTED_MODULE_3__classes_maths_js__["a" /* default */].getRandomBetween(xQuarterChnunk, 2*xQuarterChnunk);
 		this.y  = gameData.screen.height/2;
-		this.dx = __WEBPACK_IMPORTED_MODULE_3__classes_maths_js__["a" /* default */].getRandomBetween(-4, 4);
-		this.dy = __WEBPACK_IMPORTED_MODULE_3__classes_maths_js__["a" /* default */].getRandomBetween(2,4);
+
+		var velocity = this.size/6;
+
+		this.dx = __WEBPACK_IMPORTED_MODULE_3__classes_maths_js__["a" /* default */].getRandomBetween(-velocity, velocity);
+		this.dy = __WEBPACK_IMPORTED_MODULE_3__classes_maths_js__["a" /* default */].getRandomBetween(velocity/2, velocity);
 	}
 
 	init(gameData) {
@@ -1113,20 +1145,21 @@ class PongLabel extends __WEBPACK_IMPORTED_MODULE_0__classes_actor_js__["a" /* A
 		this.y = y;
 		this.size = size;
 		this.text = text;
-		this.pongTransitionTextSize = new __WEBPACK_IMPORTED_MODULE_3__classes_transition_event_js__["a" /* default */]('pong-entry', 1280, 100, 'easeInCubic', 200);
+		this.alpha = 0;
+		this.pongTransitionTextAlpha = new __WEBPACK_IMPORTED_MODULE_3__classes_transition_event_js__["a" /* default */]('pong-entry', 0, 1, 'easeInCubic', 200);
 	}
 
 	draw(gameData) {
 		
 		var canvasContext = __WEBPACK_IMPORTED_MODULE_1__classes_canvas_js__["a" /* default */].getContext(gameData.canvasId);
-		canvasContext.font      = "bold " + this.size + "px Arial";
-		canvasContext.fillStyle = "white";
+		canvasContext.font      = "bold 100px Arial";
+		canvasContext.fillStyle = "rgba(255, 255, 255, " + this.alpha + ")";
 		canvasContext.textAlign = "center";
 		canvasContext.fillText(this.text,this.x,this.y);
 	}
 
 	update(gameData) {
-		this.size = this.pongTransitionTextSize.tick();
+		this.alpha = this.pongTransitionTextAlpha.tick();
 	}
 }
 
@@ -1217,6 +1250,61 @@ class Label extends __WEBPACK_IMPORTED_MODULE_0__actor_js__["a" /* Actor */] {
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Label);
+
+/***/ }),
+/* 23 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class GridHandler {
+	constructor(width, height, type='golden-ratio-vertical') {
+		this.width  = width;
+		this.height = height;
+
+		this.marginTopBottom = 0;
+		this.marginLeftRight = 0;
+
+		this.quadrantSize = 0;
+
+		this.build(type);
+	}
+
+	build(type) {
+		switch (type) {
+			case 'golden-ratio-vertical':
+				this.buildGoldenRatio();
+				break;
+			default:
+				console.log('[ERROR] Grid type not suported.');
+				return false;
+		}
+	}
+
+	buildGoldenRatio() {
+		// 39 quads height, 24 width (mobile friendly)
+		this.quadrantSize = this.width/24;
+
+		if ((this.quadrantSize * 39) > this.height) {
+			this.quadrantSize = this.height/39;
+			this.marginLeftRight = (this.width - (this.quadrantSize * 24))/2;
+		} else {
+			this.marginTopBottom = (this.height - (this.quadrantSize * 39))/2;
+		}		
+	}
+
+	size(n) {
+		return n * this.quadrantSize;
+	}
+
+	pos(x, y) {
+		return {
+			x: this.marginLeftRight + (x * this.quadrantSize),
+			y: this.marginTopBottom + (y * this.quadrantSize)
+		}
+	}
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (GridHandler);
 
 /***/ })
 /******/ ]);

@@ -10,20 +10,21 @@ class PongLabel extends Actor {
 		this.y = y;
 		this.size = size;
 		this.text = text;
-		this.pongTransitionTextSize = new TransitionEvent('pong-entry', 1280, 100, 'easeInCubic', 200);
+		this.alpha = 0;
+		this.pongTransitionTextAlpha = new TransitionEvent('pong-entry', 0, 1, 'easeInCubic', 200);
 	}
 
 	draw(gameData) {
 		
 		var canvasContext = Canvas.getContext(gameData.canvasId);
-		canvasContext.font      = "bold " + this.size + "px Arial";
-		canvasContext.fillStyle = "white";
+		canvasContext.font      = "bold 100px Arial";
+		canvasContext.fillStyle = "rgba(255, 255, 255, " + this.alpha + ")";
 		canvasContext.textAlign = "center";
 		canvasContext.fillText(this.text,this.x,this.y);
 	}
 
 	update(gameData) {
-		this.size = this.pongTransitionTextSize.tick();
+		this.alpha = this.pongTransitionTextAlpha.tick();
 	}
 }
 
