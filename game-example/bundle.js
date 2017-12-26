@@ -101,27 +101,31 @@ class Event {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__screen_js__ = __webpack_require__(3);
 
 
+let CanvasList = {};
+
 class Canvas {
 
 	static init(canvasId) { 
+		CanvasList[canvasId] = {};
+		CanvasList[canvasId]['canvasObj'] = document.getElementById(canvasId);
+		CanvasList[canvasId]['context']   = CanvasList[canvasId]['canvasObj'].getContext('2d');
+		this.width  = __WEBPACK_IMPORTED_MODULE_0__screen_js__["a" /* default */].width();
+		this.height = __WEBPACK_IMPORTED_MODULE_0__screen_js__["a" /* default */].height();
 		Canvas.clear(canvasId);
 	}
 
 	static clear(canvasId, width=false, height=false) {
 		var context = Canvas.getContext(canvasId);
-		context.canvas.width  = width ? width : __WEBPACK_IMPORTED_MODULE_0__screen_js__["a" /* default */].width();
-  		context.canvas.height = height ? height : __WEBPACK_IMPORTED_MODULE_0__screen_js__["a" /* default */].height();
+		context.canvas.width  = width ? width : this.width;
+  		context.canvas.height = height ? height : this.height;
 	}
 
 	static getCanvas(canvasId) {
-		return document.getElementById(canvasId);
+		return CanvasList[canvasId]['canvasObj'];
 	}
 
 	static getContext(canvasId) {
-		var canvas  = Canvas.getCanvas(canvasId);
-		var context = canvas.getContext('2d');
-
-		return context;
+		return CanvasList[canvasId]['context'];
 	}
 
 	static rotateContext(canvasId, centerX, centerY, angle) {
@@ -879,13 +883,13 @@ class Ball extends __WEBPACK_IMPORTED_MODULE_2__classes_actor_js__["b" /* Rectan
 
 	initPositionAndDirection(gameData) {
 		var xQuarterChnunk = gameData.screen.width/4;
-		this.x  = __WEBPACK_IMPORTED_MODULE_3__classes_maths_js__["a" /* default */].getRandomBetween(xQuarterChnunk, 2*xQuarterChnunk);
-		this.y  = gameData.screen.height/2;
+		this.x  = Math.round(__WEBPACK_IMPORTED_MODULE_3__classes_maths_js__["a" /* default */].getRandomBetween(xQuarterChnunk, 2*xQuarterChnunk));
+		this.y  = Math.round(gameData.screen.height/2);
 
-		var velocity = this.size/6;
+		var velocity = Math.round(this.size/6);
 
-		this.dx = __WEBPACK_IMPORTED_MODULE_3__classes_maths_js__["a" /* default */].getRandomBetween(-velocity, velocity);
-		this.dy = __WEBPACK_IMPORTED_MODULE_3__classes_maths_js__["a" /* default */].getRandomBetween(velocity/2, velocity);
+		this.dx = Math.round(__WEBPACK_IMPORTED_MODULE_3__classes_maths_js__["a" /* default */].getRandomBetween(-velocity, velocity));
+		this.dy = Math.round(__WEBPACK_IMPORTED_MODULE_3__classes_maths_js__["a" /* default */].getRandomBetween(velocity/2, velocity));
 	}
 
 	init(gameData) {

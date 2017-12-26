@@ -16,13 +16,13 @@ class Ball extends RectangleActor {
 
 	initPositionAndDirection(gameData) {
 		var xQuarterChnunk = gameData.screen.width/4;
-		this.x  = Maths.getRandomBetween(xQuarterChnunk, 2*xQuarterChnunk);
-		this.y  = gameData.screen.height/2;
+		this.x  = Math.round(Maths.getRandomBetween(xQuarterChnunk, 2*xQuarterChnunk));
+		this.y  = Math.round(gameData.screen.height/2);
 
-		var velocity = this.size/6;
+		var velocity = Math.round(this.size/6);
 
-		this.dx = Maths.getRandomBetween(-velocity, velocity);
-		this.dy = Maths.getRandomBetween(velocity/2, velocity);
+		this.dx = Math.round(Maths.getRandomBetween(-velocity, velocity));
+		this.dy = Math.round(Maths.getRandomBetween(velocity/2, velocity));
 	}
 
 	init(gameData) {

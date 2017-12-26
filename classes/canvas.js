@@ -1,26 +1,30 @@
 import Screen from './screen.js';
 
+let CanvasList = {};
+
 class Canvas {
 
 	static init(canvasId) { 
+		CanvasList[canvasId] = {};
+		CanvasList[canvasId]['canvasObj'] = document.getElementById(canvasId);
+		CanvasList[canvasId]['context']   = CanvasList[canvasId]['canvasObj'].getContext('2d');
+		this.width  = Screen.width();
+		this.height = Screen.height();
 		Canvas.clear(canvasId);
 	}
 
 	static clear(canvasId, width=false, height=false) {
 		var context = Canvas.getContext(canvasId);
-		context.canvas.width  = width ? width : Screen.width();
-  		context.canvas.height = height ? height : Screen.height();
+		context.canvas.width  = width ? width : this.width;
+  		context.canvas.height = height ? height : this.height;
 	}
 
 	static getCanvas(canvasId) {
-		return document.getElementById(canvasId);
+		return CanvasList[canvasId]['canvasObj'];
 	}
 
 	static getContext(canvasId) {
-		var canvas  = Canvas.getCanvas(canvasId);
-		var context = canvas.getContext('2d');
-
-		return context;
+		return CanvasList[canvasId]['context'];
 	}
 
 	static rotateContext(canvasId, centerX, centerY, angle) {
