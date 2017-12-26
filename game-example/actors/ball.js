@@ -16,7 +16,7 @@ class Ball extends RectangleActor {
 
 	initPositionAndDirection(gameData) {
 		var xQuarterChnunk = gameData.screen.width/4;
-		this.x  = Math.round(Maths.getRandomBetween(xQuarterChnunk, 2*xQuarterChnunk));
+		this.x  = Math.round(Maths.getRandomBetween(gameData.xBoundLeft, 2*xQuarterChnunk));
 		this.y  = Math.round(gameData.screen.height/2);
 
 		var velocity = Math.round(this.size/6);

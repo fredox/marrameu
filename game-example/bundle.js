@@ -883,7 +883,7 @@ class Ball extends __WEBPACK_IMPORTED_MODULE_2__classes_actor_js__["b" /* Rectan
 
 	initPositionAndDirection(gameData) {
 		var xQuarterChnunk = gameData.screen.width/4;
-		this.x  = Math.round(__WEBPACK_IMPORTED_MODULE_3__classes_maths_js__["a" /* default */].getRandomBetween(xQuarterChnunk, 2*xQuarterChnunk));
+		this.x  = Math.round(__WEBPACK_IMPORTED_MODULE_3__classes_maths_js__["a" /* default */].getRandomBetween(gameData.xBoundLeft, 2*xQuarterChnunk));
 		this.y  = Math.round(gameData.screen.height/2);
 
 		var velocity = Math.round(this.size/6);
