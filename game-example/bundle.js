@@ -728,6 +728,11 @@ class Touch {
 		Touch.canvasList[canvasId].current.x  = event.touches[0].clientX;
 		Touch.canvasList[canvasId].current.y  = event.touches[0].clientY;
 
+		// Support for multitouch
+		Touch.canvasList[canvasId].touches = event.touches;
+
+		console.log(Touch.canvasList);
+
 		__WEBPACK_IMPORTED_MODULE_1__event_js__["a" /* default */].emit('touch.' + canvasId, {type:'touchMove', canvasId:canvasId, touch:Touch.canvasList[canvasId]});
 	}
 
